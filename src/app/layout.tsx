@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Encode_Sans } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+import { Navbar } from "./_Component/NavBar/Navbar";
+import Footer from "./_Component/Footer/Footer";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { Toaster } from "@/components/ui/sonner"
+import UserProvider from "src/userProvider";
+import CountProvider from "src/CountProvider";
+const Encode_SansFont = Encode_Sans({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["100", "400", "800"],
 });
 
 export const metadata: Metadata = {
@@ -24,10 +25,39 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        />
+      </head>
+      <body className={`${Encode_SansFont.className}`}>
+        <UserProvider>
+        <CountProvider>
+        <Navbar />
+        <main className="p-5">
+          {children}
+        </main>
+        <Toaster
+          position="top-center"
+          richColors
+          toastOptions={{
+            classNames: {
+              toast:
+                "text-2xl px-10 py-6 min-w-[500px] rounded-2xl shadow-2xl text-center",
+              success: "bg-green-600 text-white",
+              error: "bg-red-600 text-white",
+            },
+            style: {
+              top: "50%",
+              transform: "translateY(-50%)",
+            },
+          }}
+        />
+
+        <Footer />
+        </CountProvider>
+        </UserProvider>
       </body>
     </html>
   );
