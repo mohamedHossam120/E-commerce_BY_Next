@@ -4,7 +4,7 @@ import { getUserToken } from "src/getUserToken"
 export async function checkoutPaymenet(cartId: string, shippingData: { details: string, phone: string, city: string }) {
     const token = await getUserToken()
     if (token) {
-        const res = await fetch(`${NEXTAUTH_API}/api/v1/orders/checkout-session/${cartId}?url=${process.env.NEXTAUTH_API}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/orders/checkout-session/${cartId}?url=${NEXTAUTH_API}`, {
             method: "post",
             body: JSON.stringify({
                 "shippingAddress": shippingData
