@@ -4,21 +4,31 @@ import { cookies } from "next/headers";
 
 export async function getUserId() {
     const cookiesData = await cookies();
-    const encryptToken = cookiesData.get("next-auth.session-token")?.value;
+    
+    // بنحاول نجيب الكوكي العادية (Local) أو المؤمنة (Production)
+    const token = cookiesData.get("next-auth.session-token")?.value || 
+                  cookiesData.get("__Secure-next-auth.session-token")?.value;
 
-    if (!encryptToken) {
+    if (!token) {
         console.log("No session token found");
         return null;
     }
 
-    const data = await decode({ token: encryptToken, secret: process.env.NEXTAUTH_SECRET! });
+    try {
+        const data = await decode({ 
+            token: token, 
+            secret: process.env.NEXTAUTH_SECRET! 
+        });
 
-    if (!data) {
-        console.log("Invalid token or unable to decode");
+        if (!data) {
+            console.log("Invalid token or unable to decode");
+            return null;
+        }
+
+        // في RouteMisr الـ ID هو الـ sub
+        return data.sub || null;
+    } catch (error) {
+        console.error("JWT Decode Error:", error);
         return null;
     }
-
-    console.log("Decoded JWT:", data);
-
-    return data.sub || null;
 }

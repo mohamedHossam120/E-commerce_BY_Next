@@ -1,67 +1,41 @@
-'use server';
+'use server'
+import { getUserToken } from "src/getUserToken"
 
-import { cookies } from "next/headers";
-import { CHECKOUT_REDIRECT_URL } from "src/config/urls";
-
-type ShippingData = {
-  details: string;
-  phone: string;
-  city: string;
-};
-
-/* ================== CHECKOUT ================== */
-export async function checkoutPaymenet(
-  cartId: string,
-  shippingData: ShippingData
-) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-
-  if (!token) {
-    throw new Error("User not authenticated");
-  }
-
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/orders/checkout-session/${cartId}?url=${CHECKOUT_REDIRECT_URL}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        token,
-      },
-      body: JSON.stringify({
-        shippingAddress: shippingData,
-      }),
-      cache: "no-store",
+export async function checkoutPaymenet(cartId: string, shippingData: { details: string, phone: string, city: string }) {
+    const token = await getUserToken()
+    if (token) {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/orders/checkout-session/${cartId}?url=${NEXTAUTH_API}`, {
+            method: "post",
+            body: JSON.stringify({
+                "shippingAddress": shippingData
+            }),
+            headers: {
+                'content-type': "application/json",
+                 token: token
+            }
+        })
+        const data=await res.json()
+        return data
     }
-  );
 
-  if (!res.ok) {
-    throw new Error("Checkout failed");
-  }
-
-  return res.json();
 }
+import { getUserId } from "src/getUserId";
+import { NEXTAUTH_API } from "src/config/urls"
 
-/* ================== GET ALL ORDERS ================== */
 export default async function getUserOrders() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
+    const userId = await getUserId();
 
-  if (!token) {
-    return []; // مهم جدًا عشان orders.map ما يقعش
-  }
-
-  const res = await fetch(
-    "https://ecommerce.routemisr.com/api/v1/orders/user",
-    {
-      headers: {
-        token,
-      },
-      cache: "no-store",
+    if (!userId) {
+        throw new Error("User not authenticated");
     }
-  );
 
-  const data = await res.json();
-  return data.data ?? [];
+    const res = await fetch(
+        `https://ecommerce.routemisr.com/api/v1/orders/user/${userId}`,
+        {
+            cache: "no-store"
+        }
+    );
+
+    return res.json();
 }
+
