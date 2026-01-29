@@ -39,3 +39,34 @@ export default async function getUserOrders() {
     return res.json();
 }
 
+
+
+
+// 'use server';
+
+// import { getUserToken } from "src/getUserToken";
+
+// export default async function getUserOrders() {
+//   const token = await getUserToken();
+
+//   if (!token) {
+//     throw new Error("User not authenticated");
+//   }
+
+//   const res = await fetch(
+//     "https://ecommerce.routemisr.com/api/v1/orders/user",
+//     {
+//       headers: {
+//         token: token,
+//       },
+//       cache: "no-store",
+//     }
+//   );
+
+//   if (!res.ok) {
+//     const error = await res.text();
+//     throw new Error(error);
+//   }
+
+//   return res.json();
+// }
