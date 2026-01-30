@@ -31,8 +31,6 @@ export default function Footer() {
                         <h4 className="font-bold mb-4 text-lg">Quick Links</h4>
                         <ul className="space-y-2 text-sm">
                             <li><Link href="/products" className="hover:underline transition-all text-white/90">Products</Link></li>
-                            <li><Link href="/category" className="hover:underline transition-all text-white/90">Categories</Link></li>
-                            <li><Link href="/brands" className="hover:underline transition-all text-white/90">Brands</Link></li>
                             <li><Link href="/wishlist" className="hover:underline transition-all text-white/90">Wishlist</Link></li>
                         </ul>
                     </div>
